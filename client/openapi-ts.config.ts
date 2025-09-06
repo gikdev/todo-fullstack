@@ -1,7 +1,7 @@
 import { defineConfig } from "@hey-api/openapi-ts"
 
 export default defineConfig({
-  input: `http://localhost:3000/swagger/json`,
+  input: `http://localhost:3000/api/swagger/json`,
   output: "src/api-client",
   plugins: [
     { name: "@hey-api/client-fetch", exportFromIndex: true, baseUrl: "/api" },
