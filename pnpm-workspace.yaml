@@ -1,9 +1,0 @@
-packages:
-  - client
-  - server
-
-onlyBuiltDependencies:
-  - '@nestjs/core'
-  - '@scarf/scarf'
-  - '@tailwindcss/oxide'
-  - esbuild

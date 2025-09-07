@@ -4,7 +4,7 @@ import {
   Delete,
   Get,
   Param,
-  ParseUUIDPipe,
+  ParseIntPipe,
   Patch,
   Post,
 } from "@nestjs/common"
@@ -19,7 +19,7 @@ import {
   ApiNotFoundResponse,
   ApiTags,
 } from "@nestjs/swagger"
-import { Task } from "./task"
+import { TaskDto } from "./task.dto"
 
 @ApiTags("Tasks")
 @Controller("tasks")
@@ -30,7 +30,7 @@ export class TasksController {
   @ApiOperation({ summary: "Retrieve all tasks" })
   @ApiOkResponse({
     description: "List of all tasks",
-    type: Task,
+    type: TaskDto,
     isArray: true,
   })
   getAllTasks() {
@@ -41,25 +41,24 @@ export class TasksController {
   @ApiOperation({ summary: "Create a new task" })
   @ApiCreatedResponse({
     description: "The task has been successfully created",
-    type: Task,
+    type: TaskDto,
   })
   createTask(@Body() createTaskDto: CreateTaskDto) {
-    return this.tasksService.create(createTaskDto.title)
+    return this.tasksService.create(createTaskDto)
   }
 
   @Delete("/:id")
   @ApiOperation({ summary: "Delete a task by its ID" })
   @ApiParam({
     name: "id",
-    type: "string",
-    format: "uuid",
+    type: "number",
     required: true,
-    example: "550e8400-e29b-41d4-a716-446655440000",
-    description: "The UUID of the task to delete",
+    example: 123,
+    description: "The ID of the task to delete",
   })
-  @ApiOkResponse({ description: "Task successfully deleted", type: Task })
+  @ApiOkResponse({ description: "Task successfully deleted", type: TaskDto })
   @ApiNotFoundResponse({ description: "Task not found" })
-  removeTask(@Param("id", new ParseUUIDPipe({ version: "4" })) id: string) {
+  removeTask(@Param("id", ParseIntPipe) id: number) {
     return this.tasksService.remove(id)
   }
 
@@ -67,16 +66,15 @@ export class TasksController {
   @ApiOperation({ summary: "Update a task’s completion status" })
   @ApiParam({
     name: "id",
-    type: "string",
-    format: "uuid",
+    type: "number",
     required: true,
-    example: "550e8400-e29b-41d4-a716-446655440000",
-    description: "The UUID of the task to update",
+    example: 123,
+    description: "The ID of the task to delete",
   })
-  @ApiOkResponse({ description: "Task status updated", type: Task })
+  @ApiOkResponse({ description: "Task status updated", type: TaskDto })
   @ApiNotFoundResponse({ description: "Task not found" })
   updateTaskDone(
-    @Param("id", new ParseUUIDPipe({ version: "4" })) id: string,
+    @Param("id", ParseIntPipe) id: number,
     @Body() patchTaskDoneDto: PatchTaskDoneDto,
   ) {
     return this.tasksService.toggleTaskDone(id, patchTaskDoneDto.done)

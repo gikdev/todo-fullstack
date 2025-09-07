@@ -1,14 +1,14 @@
 import { CheckSquareIcon, SquareIcon } from "@phosphor-icons/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import {
-  type Task,
+  type TaskDto,
   tasksControllerGetAllTasksQueryKey,
   tasksControllerUpdateTaskDoneMutation,
 } from "#/api-client"
 
 interface TaskToggleProps {
-  id: Task["id"]
-  done: Task["done"]
+  id: TaskDto["id"]
+  done: TaskDto["done"]
 }
 
 export function TaskToggle({ done, id }: TaskToggleProps) {
@@ -19,7 +19,7 @@ export function TaskToggle({ done, id }: TaskToggleProps) {
     ...tasksControllerUpdateTaskDoneMutation(),
     onError: err => alert(err),
     onSuccess(changedTask) {
-      queryClient.setQueryData<Task[]>(queryKey, oldTasks =>
+      queryClient.setQueryData<TaskDto[]>(queryKey, oldTasks =>
         (oldTasks ?? []).map(t => (t.id === changedTask.id ? changedTask : t)),
       )
     },

@@ -1,40 +1,46 @@
 import { Injectable, NotFoundException } from "@nestjs/common"
-import { Task } from "./task"
-import { v4 as uuidv4 } from "uuid"
+import { TaskDto } from "./task.dto"
+import { Repository } from "typeorm"
+import { Task } from "./task.entity"
+import { InjectRepository } from "@nestjs/typeorm"
+import { CreateTaskDto } from "./create-task.dto"
+import { plainToInstance } from "class-transformer"
 
 @Injectable()
 export class TasksService {
-  tasks: Task[] = []
+  tasks: TaskDto[] = []
 
-  findAll() {
-    return this.tasks
+  constructor(
+    @InjectRepository(Task)
+    private readonly tasksRepo: Repository<Task>,
+  ) {}
+
+  async findAll() {
+    const tasks = await this.tasksRepo.find()
+    return plainToInstance(TaskDto, tasks)
   }
 
-  create(title: Task["title"]) {
-    const newTask: Task = {
-      id: uuidv4(),
-      title,
-      done: false,
-    }
-
-    this.tasks.push(newTask)
-    return newTask
+  async create(createTaskDto: CreateTaskDto) {
+    const newTask = this.tasksRepo.create(createTaskDto)
+    const savedNewTask = await this.tasksRepo.save(newTask)
+    return plainToInstance(TaskDto, savedNewTask)
   }
 
-  remove(id: Task["id"]) {
-    const index = this.tasks.findIndex(t => t.id === id)
-    if (index === -1)
-      throw new NotFoundException(`Task with ID: ${id} was not found!`)
+  async remove(id: TaskDto["id"]) {
+    const task = await this.tasksRepo.findOneBy({ id })
+    if (!task) throw new NotFoundException(`Task with ID: ${id} was not found!`)
 
-    const [removedTask] = this.tasks.splice(index, 1)
-    return removedTask
+    const taskDto = plainToInstance(TaskDto, task)
+    await this.tasksRepo.remove(task)
+    return taskDto
   }
 
-  toggleTaskDone(id: Task["id"], newDone: Task["done"]) {
-    const task = this.tasks.find(t => t.id === id)
+  async toggleTaskDone(id: TaskDto["id"], newDone: TaskDto["done"]) {
+    const task = await this.tasksRepo.findOneBy({ id })
     if (!task) throw new NotFoundException(`Task with ID: ${id} was not found!`)
 
     task.done = newDone
-    return task
+    const udpatedTask = await this.tasksRepo.save(task)
+    return plainToInstance(TaskDto, udpatedTask)
   }
 }

@@ -1,11 +1,11 @@
-import type { Task } from "#/api-client"
+import type { TaskDto } from "#/api-client"
 import { TaskDeleteBtn } from "./TaskDeleteBtn"
 import { TaskToggle } from "./TaskToggle"
 
 interface TaskItemProps {
-  id: Task["id"]
-  title: Task["title"]
-  done: Task["done"]
+  id: TaskDto["id"]
+  title: TaskDto["title"]
+  done: TaskDto["done"]
 }
 
 export function TaskItem({ done, id, title }: TaskItemProps) {

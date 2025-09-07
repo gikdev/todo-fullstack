@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import {
-  type Task,
+  type TaskDto,
   tasksControllerCreateTaskMutation,
   tasksControllerGetAllTasksQueryKey,
 } from "#/api-client"
@@ -13,7 +13,7 @@ export function AddTaskForm() {
     ...tasksControllerCreateTaskMutation(),
     onSuccess(newlyCreatedTask) {
       setTitle("")
-      queryClient.setQueryData<Task[]>(
+      queryClient.setQueryData<TaskDto[]>(
         tasksControllerGetAllTasksQueryKey(),
         oldTasks => [...(oldTasks ?? []), newlyCreatedTask],
       )

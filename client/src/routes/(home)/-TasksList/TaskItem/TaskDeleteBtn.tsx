@@ -1,13 +1,13 @@
 import { SpinnerGapIcon, TrashIcon } from "@phosphor-icons/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import {
-  type Task,
+  type TaskDto,
   tasksControllerGetAllTasksQueryKey,
   tasksControllerRemoveTaskMutation,
 } from "#/api-client"
 
 interface TaskDeleteBtnProps {
-  taskId: Task["id"]
+  taskId: TaskDto["id"]
 }
 
 export function TaskDeleteBtn({ taskId }: TaskDeleteBtnProps) {
@@ -15,9 +15,9 @@ export function TaskDeleteBtn({ taskId }: TaskDeleteBtnProps) {
   const { mutate: removeTask, isPending } = useMutation({
     ...tasksControllerRemoveTaskMutation(),
     onSuccess(removedTask) {
-      queryClient.setQueryData<Task[]>(
+      queryClient.setQueryData<TaskDto[]>(
         tasksControllerGetAllTasksQueryKey(),
-        oldTasks => (oldTasks ?? []).filter(t => t.id !== removedTask.id),
+        oldTasks => oldTasks?.filter(t => t.id !== removedTask.id) ?? [],
       )
     },
     onError: err => alert(err),

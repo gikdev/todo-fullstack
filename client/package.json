@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "format": "biome format --write",
     "check": "biome check --write",
     "openapi-ts": "openapi-ts",
     "dev": "vite",
