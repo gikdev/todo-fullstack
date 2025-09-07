@@ -25,7 +25,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle("TODO app API")
     .setDescription("This is a simple full-stack project I'm tryin' to do")
-    .addServer("http://localhost:3000")
+    .addServer("http://localhost:3000/api")
     .setVersion("1.0")
     .build()
   const doc = SwaggerModule.createDocument(app, config)
